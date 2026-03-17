@@ -1,10 +1,11 @@
+import json
 import logging
 from datetime import datetime
 
 import gspread
 from google.oauth2.service_account import Credentials
 
-from config import GOOGLE_CREDENTIALS_FILE, GOOGLE_SHEET_ID, TICKET_PRICE
+from config import GOOGLE_CREDENTIALS_JSON, GOOGLE_SHEET_ID, TICKET_PRICE
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,8 @@ HEADERS = ["Time", "Full Name", "Ticket Paid", "Transaction ID", "Alcohol", "Amo
 
 
 def _get_worksheet():
-    creds = Credentials.from_service_account_file(GOOGLE_CREDENTIALS_FILE, scopes=SCOPES)
+    creds_dict = json.loads(GOOGLE_CREDENTIALS_JSON)
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(GOOGLE_SHEET_ID)
     return sheet.sheet1
